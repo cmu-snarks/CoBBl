@@ -1,5 +1,3 @@
-use super::commitments::{Commitments, MultiCommitGens};
-use super::group::GroupElement;
 use super::scalar::{Scalar, ScalarFromPrimitives};
 use super::transcript::{AppendToTranscript, ProofTranscript};
 use merlin::Transcript;
@@ -57,10 +55,6 @@ impl UniPoly {
     self.coeffs.len() - 1
   }
 
-  pub fn as_vec(&self) -> Vec<Scalar> {
-    self.coeffs.clone()
-  }
-
   pub fn eval_at_zero(&self) -> Scalar {
     self.coeffs[0]
   }
@@ -85,10 +79,6 @@ impl UniPoly {
     CompressedUniPoly {
       coeffs_except_linear_term,
     }
-  }
-
-  pub fn commit(&self, gens: &MultiCommitGens, blind: &Scalar) -> GroupElement {
-    self.coeffs.commit(blind, gens)
   }
 }
 

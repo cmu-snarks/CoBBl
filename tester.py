@@ -255,9 +255,9 @@ def execute_cobbl_no_opt(b_name, f_name, perc):
                     -e 's/Total Proof Size: //p' \
                 >> ../{f_name}\"")
 
-# BENCHMARK = ["find_min", "mat_mult", "kmp_search", "rle_codec", "sha256", "poseidon", "dna_align"]
+BENCHMARK = ["find_min", "mat_mult", "kmp_search", "rle_codec", "sha256", "poseidon", "dna_align"]
 # BENCHMARK = ["find_min_ff", "mat_mult_ff"]
-BENCHMARK = ["mat_mult"]
+# BENCHMARK = ["mat_mult"]
 os.system(f"./setup.sh 2> /dev/null")
 for b in BENCHMARK:
     preprocess(b)

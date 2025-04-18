@@ -886,16 +886,6 @@ pub fn field_to_bits(f: T, n: usize) -> Result<T, String> {
     }
 }
 
-pub fn field_to_bool(f: T) -> Result<T, String> {
-    match &f.ty {
-        Ty::Field => Ok(T::new(
-            Ty::Bool,
-            term![Op::BvBit(0); term![Op::PfToBv(1); f.term]],
-        )),
-        u => Err(format!("Cannot do uint-to-bits on {u}")),
-    }
-}
-
 fn bv_from_bits(barr: Term, size: usize) -> Term {
     term(
         Op::BvConcat,

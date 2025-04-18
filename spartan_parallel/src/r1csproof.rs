@@ -294,7 +294,7 @@ impl R1CSProof {
     timer_tmp.stop();
     timer_sc_proof_phase1.stop();
 
-    let (tau_claim, Az_claim, Bz_claim, Cz_claim) =
+    let (_tau_claim, Az_claim, Bz_claim, Cz_claim) =
       (&(poly_tau_p[0] * poly_tau_q[0] * poly_tau_x[0]), &poly_Az.index(0, 0, 0, 0), &poly_Bz.index(0, 0, 0, 0), &poly_Cz.index(0, 0, 0, 0));
 
     Az_claim.append_to_transcript(b"Az_claim", transcript);

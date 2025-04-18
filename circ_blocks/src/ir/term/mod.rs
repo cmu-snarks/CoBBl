@@ -729,7 +729,7 @@ impl Default for Value {
 }
 
 impl Value {
-    fn pretty_simpl<W: std::io::Write>(&self, f: &mut W) -> Result<(), std::io::Error> {
+    fn _pretty_simpl<W: std::io::Write>(&self, f: &mut W) -> Result<(), std::io::Error> {
         match self {
             Value::Bool(b) => write!(f, "{b}"),
             Value::Field(fe) => write!(f, "{}f", fe.i()),

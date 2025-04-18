@@ -1,6 +1,5 @@
 //! The ZoKrates/Z# front-end
 
-mod interp;
 mod parser;
 mod term;
 mod blocks;
@@ -446,8 +445,8 @@ enum ZVis {
 }
 
 enum ArrayParamMetadata {
-    Committed,
-    Transcript,
+    _Committed,
+    _Transcript,
 }
 
 impl<'ast> ZGen<'ast> {

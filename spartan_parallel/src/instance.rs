@@ -1483,7 +1483,6 @@ impl Instance {
           vec![(V_d, 1)],
           vec![(V_pi, 1)],
         );
-        constraint_count += 1;
         (A, B, C)
       };
       if PROVER_MODE {

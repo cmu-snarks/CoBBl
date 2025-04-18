@@ -2214,31 +2214,6 @@ impl<'ast> ZGen<'ast> {
         }).unwrap()
     }
 
-    // asserts var == cnst
-    fn bl_gen_assert_const(&'ast self, var: &str, cnst: usize) {
-        let lhs_t = self.bl_gen_ref_var(var.to_string());
-        let rhs_t = self.expr_impl_::<false>(&Expression::Literal(LiteralExpression::DecimalLiteral(DecimalLiteralExpression {
-            value: DecimalNumber {
-                value: cnst.to_string(),
-                span: Span::new("", 0, 0).unwrap()
-            },
-            suffix: Some(DecimalSuffix::Field(FieldSuffix {
-                span: Span::new("", 0, 0).unwrap()
-            })),
-            span: Span::new("", 0, 0).unwrap()
-        }))).unwrap();
-        let b = bool(eq(lhs_t, rhs_t).unwrap()).unwrap();
-        self.assert(b).unwrap();
-    }
-
-    // asserts var1 == var2
-    fn bl_gen_assert_eq(&'ast self, var1: &str, var2: &str) {
-        let lhs_t = self.bl_gen_ref_var(var1.to_string());
-        let rhs_t = self.bl_gen_ref_var(var2.to_string());
-        let b = bool(eq(lhs_t, rhs_t).unwrap()).unwrap();
-        self.assert(b).unwrap();
-    }
-
     // Return the field value 0
     fn f_const_t(&'ast self, c: usize) -> T {
         self.literal_(&LiteralExpression::DecimalLiteral(DecimalLiteralExpression {
