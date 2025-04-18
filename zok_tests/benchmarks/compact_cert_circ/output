@@ -1,0 +1,20 @@
+Num Reveals = 10:
+Converting to r1cs
+Pre-opt R1cs size: 31239
+Final R1cs size: 30706
+Compiler time: 1681ms
+
+Num Reveals = 10:
+Pre-opt R1cs size: 311741
+Final R1cs size: 306429
+Compiler time: 20065ms
+
+Num Reveals = 50:
+Pre-opt R1cs size: 1558421
+Final R1cs size: 1531869
+Compiler time: 186114ms
+
+Num Reveals = 200:
+Pre-opt R1cs size: 6233671
+Final R1cs size: 6127469
+Compiler time: 1903584ms

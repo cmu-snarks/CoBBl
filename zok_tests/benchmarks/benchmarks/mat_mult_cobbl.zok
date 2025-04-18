@@ -1,0 +1,32 @@
+def main(u32 x, u32 y, u32 z, u32 n) -> u32:
+    array_decl u32[ro 256] A
+    array_decl u32[ro 256] B
+    u32[16 * n] C = [0; 16 * n]
+
+
+    for u32 i in 0..256 do
+        A[i] = i
+        B[i] = 2 * i
+    endfor
+    // random access to ensure array is written in memory
+    u32 c1 = A[x]
+    u32 c2 = B[y]
+
+    u32 i = 0
+    while i < 16 do
+        u32 j = 0
+        while j < 16 do
+            u32 k = 0
+            while k < n do
+                C[n * i + k] = C[n * i + k] + A[16 * i + j] * B[n * j + k]
+                k = k + 1
+            endwhile
+            j = j + 1
+        endwhile
+        i = i + 1
+    endwhile
+
+
+    u32 c3 = C[z]
+
+    return c1 * c2 * c3

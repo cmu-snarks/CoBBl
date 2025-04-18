@@ -1,0 +1,8 @@
+def main() -> field:
+    field a = 0
+    field[1] arr = [1]
+    field b = 1
+    if b == 1 then
+        a = arr[0]
+    endif
+    return a

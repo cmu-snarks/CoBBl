@@ -1,0 +1,8 @@
+def main(u32[4] c, u32[6] d, u32 i, u32 j) -> u32:
+    u32 e = c[i]
+    if e == 3 then
+        u32 f = d[i]
+        d[j] = f
+        d[i] = 0
+    endif
+    return 3

@@ -1,0 +1,9 @@
+.DS_Store
+*.rtk
+*.ctk
+._.DS_Store
+._target
+*/.DS_Store
+target/*
+/**/._*
+

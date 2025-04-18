@@ -1,0 +1,172 @@
+from "./poseidon3.zok" import poseidon3
+
+const field A = 526
+const field B = 265
+
+struct Point {
+    field x
+    field y
+}
+
+// Hack: set (0, 0) to be the identity
+def point_add(Point a, Point b) -> Point:
+    // Compute numerator & denominator separately to avoid division by 0
+    field m_num = a.x != b.x ? (b.y - a.y) : (3 * a.x * a.x + A)
+    field m_denom = a.x != b.x ? (b.x - a.x) : (2 * a.y)
+    field m = m_num / m_denom
+    field x3 = a.x == 0 && a.y == 0 ? b.x : m * m - a.x - b.x
+    field y3 = a.x == 0 && a.y == 0 ? b.y : m * (a.x - x3) - a.y
+    return Point {
+        x: x3,
+        y: y3
+    }
+
+// k_bits is in big-endian of length 253
+// Use k_bits for multiplication while simultaneous check it matches k
+def point_mul(Point a, field k, field[253] k_bits) -> Point:
+    // Hack: set (0, 0) to be the identity
+    Point a_k = Point {
+        x: 0,
+        y: 0
+    }
+    field k_assemb = 0
+    for field i in 0..253 do
+        a_k = point_add(a_k, a_k)
+        k_assemb = k_assemb * 2
+        field next_bit = k_bits[i]
+        assert(next_bit * (next_bit - 1) == 0)
+        if next_bit == 1 then
+            a_k = point_add(a_k, a)
+            k_assemb = k_assemb + 1 
+        endif
+    endfor
+    assert(k_assemb == k)
+    return a_k
+
+struct DoublePoint {
+    Point p0
+    Point p1
+}
+
+struct QuadPoint {
+    Point p0
+    Point p1
+    Point p2
+    Point p3
+}
+
+// Perform two point doubles and two point adds
+// Specifically built for signature verification
+// Returns: (a_0 + a_0, a_1 + a_1, a_0 + a_0 + b_0, a_1 + a_1 + b_1)
+// a_0, a_1 might be (0, 0), b_0, b_1 are not
+def point_double_add_batch(
+    Point a_0,
+    Point b_0,
+    Point a_1,
+    Point b_1
+) -> QuadPoint:
+    // a_0 + a_0
+    field m_num = 3 * a_0.x * a_0.x + A
+    field m_denom = a_0.y == 0 ? 1 : 2 * a_0.y // Just to avoid division by 0
+    field m = m_num / m_denom
+    field x0 = a_0.x == 0 && a_0.y == 0 ? 0 : m * m - a_0.x - a_0.x
+    field y0 = a_0.x == 0 && a_0.y == 0 ? 0 : m * (a_0.x - x0) - a_0.y
+    // a_1 + a_1
+    m_num = 3 * a_1.x * a_1.x + A
+    m_denom = a_1.y == 0 ? 1 : 2 * a_1.y // Just to avoid division by 0
+    m = m_num / m_denom
+    field x1 = a_1.x == 0 && a_1.y == 0 ? 0 : m * m - a_1.x - a_1.x
+    field y1 = a_1.x == 0 && a_1.y == 0 ? 0 : m * (a_1.x - x1) - a_1.y
+    // (x0, y0) + b_0
+    m_num = x0 != b_0.x ? (b_0.y - y0) : (3 * x0 * x0 + A)
+    m_denom = x0 != b_0.x ? (b_0.x - x0) : (2 * y0)
+    m = m_num / m_denom
+    field x2 = x0 == 0 && y0 == 0 ? b_0.x : m * m - x0 - b_0.x
+    field y2 = x0 == 0 && y0 == 0 ? b_0.y : m * (x0 - x2) - y0
+    // (x1, y1) + b_1
+    m_num = x1 != b_1.x ? (b_1.y - y1) : (3 * x1 * x1 + A)
+    m_denom = x1 != b_1.x ? (b_1.x - x1) : (2 * y1)
+    m = m_num / m_denom
+    field x3 = x1 == 0 && y1 == 0 ? b_1.x : m * m - x1 - b_1.x
+    field y3 = x1 == 0 && y1 == 0 ? b_1.y : m * (x1 - x3) - y1
+    return QuadPoint {
+        p0: Point { x: x0, y: y0 },
+        p1: Point { x: x1, y: y1 },
+        p2: Point { x: x2, y: y2 },
+        p3: Point { x: x3, y: y3 }
+    }
+
+// Perform two point multiplications together
+// Specifically built for signature verification
+def point_mul_batch(
+    Point a_0, 
+    field k_0, 
+    field[253] k_bits_0,
+    Point a_1, 
+    field k_1, 
+    field[253] k_bits_1
+) -> DoublePoint:
+    // Hack: set (0, 0) to be the identity
+    Point a_k_0 = Point {
+        x: 0,
+        y: 0
+    }
+    Point a_k_1 = Point {
+        x: 0,
+        y: 0
+    }
+    field k_assemb_0 = 0
+    field k_assemb_1 = 0
+    for field i in 0..253 do
+        k_assemb_0 = k_assemb_0 * 2
+        k_assemb_1 = k_assemb_1 * 2
+        QuadPoint tmp = point_double_add_batch(a_k_0, a_0, a_k_1, a_1)
+        field next_bit_0 = k_bits_0[i]
+        assert(next_bit_0 * (next_bit_0 - 1) == 0)
+        k_assemb_0 = k_assemb_0 + next_bit_0
+        if next_bit_0 == 1 then
+            a_k_0 = tmp.p2
+        else
+            a_k_0 = tmp.p0
+        endif
+        field next_bit_1 = k_bits_1[i]
+        assert(next_bit_1 * (next_bit_1 - 1) == 0)
+        k_assemb_1 = k_assemb_1 + next_bit_1
+        if next_bit_1 == 1 then
+            a_k_1 = tmp.p3
+        else
+            a_k_1 = tmp.p1
+        endif
+    endfor
+    assert(k_assemb_0 == k_0)
+    assert(k_assemb_1 == k_1)
+    return DoublePoint {
+        p0: a_k_0,
+        p1: a_k_1
+    }
+
+struct PublicKey {
+    Point p
+    Point q
+}
+
+struct Signature {
+    Point r
+    field s
+}
+
+def verify_signature(field msg, PublicKey pk, Signature sig, field[253] e_bits, field[253] s_bits) -> field:
+    // Check all points are on the curve
+    assert(pk.p.y * pk.p.y == pk.p.x * pk.p.x * pk.p.x + A * pk.p.x + B)
+    assert(pk.q.y * pk.q.y == pk.q.x * pk.q.x * pk.q.x + A * pk.q.x + B)
+    assert(sig.r.y * sig.r.y == sig.r.x * sig.r.x * sig.r.x + A * sig.r.x + B)
+
+    field e = poseidon3(msg, sig.r.x, sig.r.y)
+    // Point eq = point_mul(pk.q, e, e_bits)
+    // Point sp = point_mul(pk.p, sig.s, s_bits)
+    DoublePoint tmp = point_mul_batch(pk.q, e, e_bits, pk.p, sig.s, s_bits)
+    Point eq = tmp.p0
+    Point sp = tmp.p1
+    Point res = point_add(sig.r, eq)
+    assert(res.x == sp.x && res.y == sp.y)
+    return 1

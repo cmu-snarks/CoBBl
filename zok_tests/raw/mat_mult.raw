@@ -1,0 +1,61 @@
+CONST:
+max_n 5 8 16
+
+INPUT:
+x 0
+y 0
+z 0
+
+PROGRAM:
+def main(u32 x, u32 y, u32 z, u32 n) -> u32:
+    // BASELINE
+    u32[{max_n * max_n}] A = [0; {max_n * max_n}]
+    u32[{max_n * max_n}] B = [0; {max_n * max_n}]
+    u32[{max_n * max_n}] C = [0; {max_n * max_n}]
+
+    // COBBL
+    array_decl u32[ro {max_n * max_n}] A
+    array_decl u32[ro {max_n * max_n}] B
+    u32[{max_n} * n] C = [0; {max_n} * n]
+
+    // END_SPLIT
+
+    for u32 i in 0..{max_n * max_n} do
+        A[i] = i
+        B[i] = 2 * i
+    endfor
+    // random access to ensure array is written in memory
+    u32 c1 = A[x]
+    u32 c2 = B[y]
+
+    // BASELINE
+    for u32 i in 0..{max_n} do
+        for u32 j in 0..{max_n} do
+            for u32 k in 0..{max_n} do
+                if k < n then
+                    C[n * i + k] = C[n * i + k] + A[{max_n} * i + j] * B[n * j + k]
+                endif
+            endfor
+        endfor
+    endfor
+
+    // COBBL
+    u32 i = 0
+    while i < {max_n} do
+        u32 j = 0
+        while j < {max_n} do
+            u32 k = 0
+            while k < n do
+                C[n * i + k] = C[n * i + k] + A[{max_n} * i + j] * B[n * j + k]
+                k = k + 1
+            endwhile
+            j = j + 1
+        endwhile
+        i = i + 1
+    endwhile
+
+    // END_SPLIT
+
+    u32 c3 = C[z]
+
+    return c1 * c2 * c3
