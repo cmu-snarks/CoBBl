@@ -51,4 +51,4 @@ y_label_list = ["", "500kB", "1MB", "1.5MB", "2MB", "2.5MB"]
 ax.set_xticklabels(x_label_list)
 ax.set_yticklabels(y_label_list)
 ax.set_xlabel("Valid Percentage / Number of Samples")
-plt.savefig('paper/graph/fig_compact_cert.png')
+plt.savefig('graphs/fig_compact_cert.png')

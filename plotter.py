@@ -376,7 +376,7 @@ def gen_circ_jolt_plots(circ_benchmark_names, circ_data, jolt_benchmark_names, j
         plt.legend(loc='upper left')
 
     plt.tight_layout()
-    plt.savefig('paper/graph/fig_eval_circ.png')
+    plt.savefig('graphs/fig_eval_circ.png')
 
     # JOLT
     runtime_subplot_name = ["Compiler time (ms), lower is better", "Prover time (ms), lower is better", "Verifier time (ms), lower is better"]
@@ -443,7 +443,7 @@ def gen_circ_jolt_plots(circ_benchmark_names, circ_data, jolt_benchmark_names, j
         # plt.title(runtime_subplot_name[i])
 
     plt.tight_layout()
-    plt.savefig('paper/graph/fig_eval_jolt.png')
+    plt.savefig('graphs/fig_eval_jolt.png')
 
 # runtime_data is of size 3 (Compiler, Prover, Verifier) x 2 (CirC, CoBBl) x Num_Expand
 # constraint_data is of size 3 (Commit, Exec, Var) x 2 (CirC, CoBBl) x Num_Expand
@@ -477,7 +477,7 @@ def gen_benchmark_plot(num_expand, runtime_data, constraint_data):
         plt.legend(loc='upper left')
     
     plt.tight_layout()
-    plt.savefig('paper/graph/fig_eval_find_min.png')
+    plt.savefig('graphs/fig_eval_find_min.png')
 
 # proof_size_data is a list of [CoBBl Size, CirC Size, Jolt Size]
 def gen_proof_size_plot(proof_size_benchmark_names, proof_size_data):
@@ -534,7 +534,7 @@ def gen_proof_size_plot(proof_size_benchmark_names, proof_size_data):
     # plt.title(runtime_subplot_name[i])
 
     plt.tight_layout()
-    plt.savefig('paper/graph/fig_eval_proof_size.png')
+    plt.savefig('graphs/fig_eval_proof_size.png')
 
 # opt_data is of size 2 x Num_Bench x 3 (Compiler, Prover, Verifier / Blocks, Exec, Var)
 def gen_opt_plot(opt_benchmark_names, opt_data):
@@ -573,7 +573,7 @@ def gen_opt_plot(opt_benchmark_names, opt_data):
         plt.legend(loc='upper left')
 
     plt.tight_layout()
-    plt.savefig('paper/graph/fig_eval_opt.png')
+    plt.savefig('graphs/fig_eval_opt.png')
 
 BENCHMARK = ["find_min", "mat_mult", "kmp_search", "dna_align", "rle_codec", "sha256", "poseidon"]
 (jolt_time_result, jolt_cons_result) = parse_jolt()

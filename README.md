@@ -15,19 +15,31 @@ A modified Spartan proof system that supports data-parallelism and additional pr
 
 ## Output Format
 A sample output can be viewed in `./output`
+Generated graphs can be viewed in `./graphs/`
 
-Current output format is consisted of a 6 x 4 table, corresponding to 4 matrices on 6 proofs 
+Time comparison is consisted of a 9 x 4 table, corresponding to 4 metrics on 9 benchmarks.
+Size comparison is consisted of a 9 x 5 table.
 
-#### Proofs
-* `Baseline`: modified CirC compiler + unmodified Spartan
-* `CoBBl For`: CoBBl proof on the exact same code as baseline (no while loops)
-* `CoBBl 100`: Program with while loops with number of iterations = upper bound
-* `CoBBl 90`: Program with while loops with number of iterations = 0.9 x upper bound
+#### Benchmarks
+* `CirC`: modified CirC compiler + unmodified Spartan
+* `CoBBl For`: CoBBl proof on the exact same code as CirC (no while loops)
+* `Jolt`: unmodified Jolt
+* `CoBBl While`: CoBBl with while loops with number of iterations = upper bound
+* `CoBBl Opt0`: CoBBl with no optimization
+* `CoBBl Opt`: CoBBl with block merge analysis
+* `CoBBl Opt`: CoBBl with register spilling but performed within the heap (as opposed to the stack)
 * `CoBBl 75`: Program with while loops with number of iterations = 0.75 x upper bound
 * `CoBBl 50`: Program with while loops with number of iterations = 0.50 x upper bound
 
-#### Matrices
+#### Time Metrics
 * `Compiler`: time to convert the code into constraints
-* `Preprocess`: time of one-time setup, mostly instance commitment
+* `Preprocess`: time of one-time setup, mostly instance commitment, not applicable to Jolt
 * `Prover`: prover setup time from witnesses to proof generation, excluding actual program execution
 * `Verifier`: verification time, includes every computation performed by the verifier
+
+#### Size Metrics
+* `Block`: number of blocks, only applicable to CoBBl
+* `Commit`: total number of non-zero entries of the circuit(s)
+* `Var`: total number of witnesses supplied by the prover
+* `Exec`: total number of constraints executed throughout the proof
+* `Proof`: size of the SNARK proof
